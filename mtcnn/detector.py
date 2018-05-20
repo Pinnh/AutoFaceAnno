@@ -4,14 +4,6 @@ from torch.autograd import Variable
 from get_nets import PNet, RNet, ONet
 from box_utils import nms, calibrate_box, get_image_boxes, convert_to_square
 from first_stage import run_first_stage
-from PIL import Image
-from PIL import ImageDraw
-import time
-import numpy as np
-import sys
-import os
-import matplotlib.pylab as plt
-import image_process as ip
 
 
 def detect_faces(image, min_face_size=20.0,
@@ -131,25 +123,3 @@ def detect_faces(image, min_face_size=20.0,
     return bounding_boxes, landmarks
 
     
-def detect_dir(path):
-    for f in os.listdir(path):
-        p=os.path.join(path,f)
-        image = ip.image_to_3channels(p,True)
-        start=time.clock()
-        bounding_boxes, landmarks = detect_faces(image)
-        end=time.clock()
-        print "take %sms"%(1000*end-1000*start),"num faces:",len(bounding_boxes)
-        if len(bounding_boxes)>0:
-            draw=ImageDraw.Draw(image)
-            
-            for bbox in bounding_boxes:
-                bbox=(bbox[0],bbox[1],bbox[2],bbox[3])
-                #img=image.crop(bbox)
-                #img.save("../gen/"+str(np.random.randint(1000,100000))+".jpg")
-                draw.rectangle(bbox,outline="red")
-            
-            plt.imshow(image)
-            plt.show()
-
-if __name__=="__main__":
-    detect_dir("../data")
